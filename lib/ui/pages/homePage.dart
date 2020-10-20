@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cov_tracker/core/utils/sizeConfig.dart';
 import 'package:cov_tracker/cubit/cubit.dart';
 import 'package:cov_tracker/ui/app_styles/styles.dart';
 import 'package:cov_tracker/ui/pages/detailCountry.dart';
@@ -38,21 +39,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: Stack(
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(.5),
-                ],
-                stops: [0, 4],
-                tileMode: TileMode.clamp,
-              ),
-            ),
-            height: kToolbarHeight * 2,
-          ),
+          backgroundPage,
           if (!isLoading)
             SafeArea(
               child: Padding(
@@ -76,35 +66,44 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: InkWell(
-                              onTap: () {
-                                Get.dialog(
-                                  PhotoView(
-                                    backgroundDecoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    imageProvider: NetworkImage(
-                                      (context.bloc<CaseCubit>().state
-                                              as CaseLoaded)
-                                          .covidCase
-                                          .image,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Icon(
-                                Icons.info,
-                                size: 18,
-                                color: greyColor,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Globally',
+                                style: subTitleStyle.copyWith(
+                                    fontWeight: FontWeight.bold),
                               ),
-                            ),
-                          ),
-                          Text(
-                            'Globally',
-                            style: subTitleStyle.copyWith(
-                                fontWeight: FontWeight.bold),
+                              InkWell(
+                                onTap: () {
+                                  Get.dialog(
+                                    PhotoView(
+                                      backgroundDecoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              loadingIndicator,
+                                      loadingBuilder: (context, event) =>
+                                          loadingIndicator,
+                                      loadFailedChild: loadingIndicator,
+                                      tightMode: true,
+                                      imageProvider: NetworkImage(
+                                        (context.bloc<CaseCubit>().state
+                                                as CaseLoaded)
+                                            .covidCase
+                                            .image,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.info,
+                                  size: SizeConfig.imageSizeMultiplierTimes(5),
+                                  color: greyColor,
+                                ),
+                              )
+                            ],
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,8 +112,7 @@ class _HomePageState extends State<HomePage> {
                                 'Total Confirmed',
                                 style: subTitleStyle.copyWith(
                                   fontWeight: FontWeight.w300,
-                                  color: Colors.grey[600],
-                                  fontSize: 15,
+                                  color: boldGreyColor,
                                 ),
                               ),
                               Text(
@@ -138,8 +136,7 @@ class _HomePageState extends State<HomePage> {
                                 'Total Deaths',
                                 style: subTitleStyle.copyWith(
                                   fontWeight: FontWeight.w300,
-                                  color: Colors.grey[600],
-                                  fontSize: 15,
+                                  color: boldGreyColor,
                                 ),
                               ),
                               Text(
@@ -150,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                                         .deaths['value'])
                                     .toString(),
                                 style: subTitleStyle.copyWith(
-                                  color: Colors.red[300],
+                                  color: redColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               )
@@ -163,8 +160,7 @@ class _HomePageState extends State<HomePage> {
                                 'Total Recovered',
                                 style: subTitleStyle.copyWith(
                                   fontWeight: FontWeight.w300,
-                                  color: Colors.grey[600],
-                                  fontSize: 15,
+                                  color: boldGreyColor,
                                 ),
                               ),
                               Text(
@@ -200,19 +196,20 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () => fetchData(),
                                 child: Icon(
                                   Icons.refresh,
-                                  size: 24,
+                                  size:
+                                      SizeConfig.imageSizeMultiplierTimes(7.5),
                                   color: primaryColor,
                                 ),
                               )
                             ],
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: SizeConfig.heightMultiplierTimes(0)),
                           Text(
-                            'Last Updated on ${DateFormat.yMEd().add_jms().format(DateTime.parse((context.bloc<CaseCubit>().state as CaseLoaded).covidCase.lastUpdate))}',
+                            'Last Updated on ${DateFormat.yMMMMd().add_jm().format(DateTime.parse((context.bloc<CaseCubit>().state as CaseLoaded).covidCase.lastUpdate))}',
                             style: subTitleStyle.copyWith(
                               fontWeight: FontWeight.w200,
-                              color: Colors.black38,
-                              fontSize: 14,
+                              color: boldGreyColor,
+                              fontSize: normalFontSize,
                             ),
                           )
                         ],
@@ -270,8 +267,10 @@ class _HomePageState extends State<HomePage> {
                                                 children: <Widget>[
                                                   Text(
                                                     country,
-                                                    style: subTitleStyle
-                                                        .copyWith(fontSize: 14),
+                                                    style:
+                                                        subTitleStyle.copyWith(
+                                                            fontSize:
+                                                                normalFontSize),
                                                   ),
                                                   Text(
                                                     snap.hasData
@@ -281,9 +280,10 @@ class _HomePageState extends State<HomePage> {
                                                         : 'Not Found',
                                                     style:
                                                         subTitleStyle.copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      fontSize: titleFontSize,
+                                                    ),
                                                   )
                                                 ],
                                               ),
@@ -294,8 +294,10 @@ class _HomePageState extends State<HomePage> {
                                                 alignment: Alignment.topRight,
                                                 child: Icon(
                                                   Icons.info,
-                                                  size: 18,
-                                                  color: Colors.grey[400],
+                                                  size: SizeConfig
+                                                      .imageSizeMultiplierTimes(
+                                                          5),
+                                                  color: greyColor,
                                                 ),
                                               ),
                                             )

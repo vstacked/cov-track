@@ -1,5 +1,5 @@
+import 'package:cov_tracker/core/utils/sizeConfig.dart';
 import 'package:cov_tracker/ui/app_styles/styles.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -14,32 +14,13 @@ class DetailCountryCase extends StatefulWidget {
 }
 
 class _DetailCountryCaseState extends State<DetailCountryCase> {
-  final Color leftBarColor = const Color(0xff53fdd7);
-  final Color rightBarColor = const Color(0xffff5182);
-  final double width = 7;
-
-  List<BarChartGroupData> rawBarGroups;
-  List<BarChartGroupData> showingBarGroups;
-
-  int touchedGroupIndex;
+  var f = NumberFormat('###,###');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  primaryColor,
-                  primaryColor.withOpacity(.5),
-                ],
-                stops: [0, 4],
-                tileMode: TileMode.clamp,
-              ),
-            ),
-            height: kToolbarHeight * 2,
-          ),
+          backgroundPage,
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -83,7 +64,8 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                             Row(
                               children: <Widget>[
                                 CircleAvatar(
-                                  maxRadius: 10,
+                                  maxRadius:
+                                      SizeConfig.imageSizeMultiplierTimes(2.5),
                                   backgroundColor: primaryColor,
                                 ),
                                 SizedBox(width: 10),
@@ -91,8 +73,8 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      widget.data['confirmed']['value']
-                                          .toString(),
+                                      f.format(
+                                          widget.data['confirmed']['value']),
                                       style: subTitleStyle.copyWith(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -104,7 +86,8 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                             Row(
                               children: <Widget>[
                                 CircleAvatar(
-                                  maxRadius: 10,
+                                  maxRadius:
+                                      SizeConfig.imageSizeMultiplierTimes(2.5),
                                   backgroundColor: Colors.black45,
                                 ),
                                 SizedBox(width: 10),
@@ -112,8 +95,8 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      widget.data['recovered']['value']
-                                          .toString(),
+                                      f.format(
+                                          widget.data['recovered']['value']),
                                       style: subTitleStyle.copyWith(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -130,7 +113,8 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                           child: Row(
                             children: <Widget>[
                               CircleAvatar(
-                                maxRadius: 10,
+                                maxRadius:
+                                    SizeConfig.imageSizeMultiplierTimes(2.5),
                                 backgroundColor: redColor,
                               ),
                               SizedBox(width: 10),
@@ -138,7 +122,7 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    widget.data['deaths']['value'].toString(),
+                                    f.format(widget.data['deaths']['value']),
                                     style: subTitleStyle.copyWith(
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -152,7 +136,7 @@ class _DetailCountryCaseState extends State<DetailCountryCase> {
                     ),
                   ),
                   Text(
-                    'Last Update :\n${DateFormat.yMEd().add_jms().format(DateTime.parse(widget.data['lastUpdate']))}',
+                    'Last Update :\n${DateFormat.yMMMMd().add_jm().format(DateTime.parse(widget.data['lastUpdate']))}',
                     style: subTitleStyle,
                     textAlign: TextAlign.center,
                   )
